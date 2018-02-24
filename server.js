@@ -29,6 +29,19 @@ function replaceToolsWithImages(md) {
 //     return insertedTools;
 // }
 
+app.post('/upload', function(req, res) {
+    if (!req.files)
+	return res.status(400).send('No files were uploaded.');
+    let uploadFile = req.files.uploadFile;
+
+    uploadFile.mv('files/' + uploadFile.name, function(err) {
+	if (err) {
+	    return res.status(500).send(err);
+	} else return res.send("http://localhost:3000/" + uploadFile.name)
+    })
+    
+});
+
 
 app.post('/import', function(req, res) {
   res.header('Access-Control-Allow-Origin', "*")
@@ -86,8 +99,6 @@ app.post('/import', function(req, res) {
 	return res.status(500).send("Wrong file type");
     }
 });
-
-//app.post('/upload);
 
 
 app.post('/export/:type', function(req, res) {
