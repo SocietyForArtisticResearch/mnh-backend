@@ -1,4 +1,7 @@
 <html>
+    <head>
+    </head>
+
     <body>
 	<form ref='uploadForm' 
 	      id='uploadForm' 
@@ -8,6 +11,33 @@
 	      encType="multipart/form-data">
             <input type="file" name="convertFile" />
             <input type='submit' value='Upload!' />
-	</form>     
+	</form>
+	<button onClick="convert()">Click</button>
     </body>
+
+    <script>
+     
+     function convert() {
+	 var url = "http://localhost:3000/export/pdf";
+	 var str = "# Some text\nthat contains this stuff and *maybe* some more  things...\n*first\n*second\n## Basic\n markdown is nice.";
+	 var data = { markdown: str};
+	 var xhr = new XMLHttpRequest();
+	 xhr.open("POST", url, true);
+	 //Send the proper header information along with the request
+	 xhr.setRequestHeader("Content-type", "application/json");
+	 xhr.send(JSON.stringify(data));
+
+	 xhr.onreadystatechange = function() {
+	     if (xhr.readyState === 4) {
+		 console.log(xhr.response); //Outputs a DOMString by default
+	     }
+	 }
+	 
+     }
+
+
+     
+    </script>
+
+    
 </html>
