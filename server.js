@@ -31,6 +31,8 @@ function replaceToolsWithImages(md) {
 
 
 app.post('/import', function(req, res) {
+  res.header('Access-Control-Allow-Origin', "*")
+
   if (!req.files)
     return res.status(400).send('No files were uploaded.');
  
