@@ -30,6 +30,8 @@ function replaceToolsWithImages(md) {
 // }
 
 app.post('/upload', function(req, res) {
+	res.header('Access-Control-Allow-Origin', "*")
+
     if (!req.files)
 	return res.status(400).send('No files were uploaded.');
     let uploadFile = req.files.uploadFile;
@@ -38,6 +40,27 @@ app.post('/upload', function(req, res) {
 	if (err) {
 	    return res.status(500).send(err);
 	} else return res.send("http://localhost:3000/" + uploadFile.name)
+    })
+    
+});
+
+app.post('/uploadAngular', function(req, res) {
+	// angular http client doesn't eat plain text return values, so this provides a json.
+	res.header('Access-Control-Allow-Origin', "*")
+
+    if (!req.files)
+	return res.status(400).send('No files were uploaded.');
+    
+    let uploadFile = req.files.uploadFile;
+
+    uploadFile.mv('files/' + uploadFile.name, function(err) {
+		if (err) {
+		    return res.status(500).send(err);
+		} else {
+		 	let uploadUrl = 'http://localhost:3000/' + uploadFile.name;
+			let result = JSON.stringify({ 'url': uploadUrl });
+			return res.send(result);
+		}
     })
     
 });
