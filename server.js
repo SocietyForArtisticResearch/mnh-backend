@@ -14,8 +14,9 @@ const app = express();
 
 // default options
 app.use(fileUpload());
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '50mb'}));
 app.options('*', cors());
+
 
 function replaceToolsWithImages(md) {
     let re = /!{(.*)}/g;
@@ -30,18 +31,25 @@ function replaceToolsWithImages(md) {
 // }
 
 app.post('/upload', function(req, res) {
-	res.header('Access-Control-Allow-Origin', "*")
+    res.header('Access-Control-Allow-Origin', "*");
 
     if (!req.files)
 	return res.status(400).send('No files were uploaded.');
-    let uploadFile = req.files.uploadFile;
 
-    uploadFile.mv('files/' + uploadFile.name, function(err) {
-	if (err) {
-	    return res.status(500).send(err);
-	} else return res.send("http://localhost:3000/" + uploadFile.name)
-    })
     
+    let uploadFile = req.files.uploadFile;
+    let type = uploadFile.mimetype;
+    
+    if ((type == "image") || (type == "audio") || (type == "video")) {
+	
+	uploadFile.mv('files/' + uploadFile.name, function(err) {
+	    if (err) {
+		return res.status(500).send(err);
+	    } else return res.send("http://localhost:3000/" + uploadFile.name);
+	});
+    } else {
+	return res.status(500).send("Wrong file type");
+    }
 });
 
 app.post('/uploadAngular', function(req, res) {
