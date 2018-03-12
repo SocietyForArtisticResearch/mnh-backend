@@ -9,6 +9,7 @@ const fileUpload = require('express-fileupload');
 const bodyParser = require('body-parser');
 const http = require('http');
 const https = require('https');
+const forceSsl = require('express-force-ssl');
 
 const port = 3000;
 
@@ -27,6 +28,7 @@ const app = express();
 // default options
 app.use(fileUpload());
 app.use(bodyParser.json({limit: '50mb'}));
+app.use(forceSsl);
 app.options('*', cors());
 
 
