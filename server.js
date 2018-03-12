@@ -7,8 +7,20 @@ const express = require('express');
 const cors = require ('cors');
 const fileUpload = require('express-fileupload');
 const bodyParser = require('body-parser');
+const http = require('http');
+const https = require('https');
 
 const port = 3000;
+
+var key = fs.readFileSync('../ssl/keys/e1b7c_21d05_9ea8c04c2c7145fee7301d5be2dd8873.key');
+var cert = fs.readFileSync( '../ssl/certs/sar_announcements_com_e1b7c_21d05_1525337882_f67e590f57e06ddcf5f5ced9bab4e4a2.crt' );
+//var ca = fs.readFileSync( '../ssl/certs/sar_announcements_com_eb53b_64655_1549100876_7746f2c803c3577300d5015ad0e5b6b6.crt' );
+
+var sslOptions = {
+  key: key,
+  cert: cert
+//  ca: ca
+};
 
 const app = express();
 
@@ -175,3 +187,4 @@ app.use(express.static('files'));
 app.listen(port, function () {
   console.log(`NMH backend app listening on port ${port}!`);
 });
+https.createServer(sslOptions, app).listen(port);
