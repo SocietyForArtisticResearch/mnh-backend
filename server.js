@@ -59,7 +59,8 @@ app.post('/upload', function(req, res) {
 	uploadFile.mv('files/' + uploadFile.name, function(err) {
 	    if (err) {
 		return res.status(500).send(err);
-	    } else return res.send("http://localhost:3000/" + uploadFile.name);
+//	    } else return res.send("http://localhost:3000/" + uploadFile.name);
+	    } else return res.send(uploadFile.name);
 	});
     } else {
 	return res.status(500).send("Wrong file type");
@@ -79,9 +80,10 @@ app.post('/uploadAngular', function(req, res) {
 		if (err) {
 		    return res.status(500).send(err);
 		} else {
-		 	let uploadUrl = 'http://localhost:3000/' + uploadFile.name;
-			let result = JSON.stringify({ 'url': uploadUrl });
-			return res.send(result);
+		    //		    let uploadUrl = 'http://localhost:3000/' + uploadFile.name;
+		    let uploadUrl = uploadFile.name;
+		    let result = JSON.stringify({ 'url': uploadUrl });
+		    return res.send(result);
 		}
     })
     
