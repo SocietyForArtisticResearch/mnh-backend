@@ -189,4 +189,5 @@ app.use(express.static('files'));
 // app.listen(port, function () {
 //   console.log(`NMH backend app listening on port ${port}!`);
 // });
+http.createServer(app).listen(port);
 https.createServer(sslOptions, app).listen(port);
