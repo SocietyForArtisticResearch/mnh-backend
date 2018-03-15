@@ -186,7 +186,7 @@ app.post('/export/:type', function(req, res) {
 
 });
     
-app.use(express.static('files', { maxAge: 10}));
+app.use(express.static('files', { maxAge: 10, immutable: true}));
 
 // app.listen(port, function () {
 //   console.log(`NMH backend app listening on port ${port}!`);
