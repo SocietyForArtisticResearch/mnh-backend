@@ -8,15 +8,30 @@ const cors = require ('cors');
 const fileUpload = require('express-fileupload');
 const bodyParser = require('body-parser');
 const mime = require('mime-magic');
+const http = require('http');
+const https = require('https');
+const forceSsl = require('express-force-ssl');
 
 const port = 3000;
+
+var key = fs.readFileSync('../ssl/keys/e1b7c_21d05_9ea8c04c2c7145fee7301d5be2dd8873.key');
+var cert = fs.readFileSync( '../ssl/certs/sar_announcements_com_e1b7c_21d05_1525337882_f67e590f57e06ddcf5f5ced9bab4e4a2.crt' );
+//var ca = fs.readFileSync( '../ssl/certs/sar_announcements_com_eb53b_64655_1549100876_7746f2c803c3577300d5015ad0e5b6b6.crt' );
+
+var sslOptions = {
+  key: key,
+  cert: cert
+//  ca: ca
+};
 
 const app = express();
 
 // default options
 app.use(fileUpload());
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(forceSsl);
 app.options('*', cors());
+
 
 function replaceToolsWithImages(md) {
     let re = /!{(.*)}/g;
@@ -31,18 +46,26 @@ function replaceToolsWithImages(md) {
 // }
 
 app.post('/upload', function(req, res) {
-	res.header('Access-Control-Allow-Origin', "*")
+    res.header('Access-Control-Allow-Origin', "*");
 
     if (!req.files)
 	return res.status(400).send('No files were uploaded.');
-    let uploadFile = req.files.uploadFile;
 
-    uploadFile.mv('files/' + uploadFile.name, function(err) {
-	if (err) {
-	    return res.status(500).send(err);
-	} else return res.send("http://localhost:3000/" + uploadFile.name)
-    })
     
+    let uploadFile = req.files.uploadFile;
+    let type = uploadFile.mimetype;
+    
+    if ((type == "image") || (type == "audio") || (type == "video")) {
+	
+	uploadFile.mv('files/' + uploadFile.name, function(err) {
+	    if (err) {
+		return res.status(500).send(err);
+//	    } else return res.send("http://localhost:3000/" + uploadFile.name);
+	    } else return res.send(uploadFile.name);
+	});
+    } else {
+	return res.status(500).send("Wrong file type");
+    }
 });
 
 app.post('/uploadAngular', function(req, res) {
@@ -76,6 +99,7 @@ app.post('/uploadAngular', function(req, res) {
         			return makeResult(type);
         		}
         	});
+
 		}
 	});
 
@@ -178,8 +202,10 @@ app.post('/export/:type', function(req, res) {
 
 });
     
-app.use(express.static('files'));
+app.use(express.static('files', { maxAge: 100000, immutable: true}));
 
-app.listen(port, function () {
-  console.log(`NMH backend app listening on port ${port}!`);
-});
+// app.listen(port, function () {
+//   console.log(`NMH backend app listening on port ${port}!`);
+// });
+//http.createServer(app).listen();
+https.createServer(sslOptions, app).listen(port);
