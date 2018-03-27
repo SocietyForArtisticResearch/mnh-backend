@@ -7,6 +7,7 @@ const express = require('express');
 const cors = require ('cors');
 const fileUpload = require('express-fileupload');
 const bodyParser = require('body-parser');
+const mime = require('mime-magic');
 
 const port = 3000;
 
@@ -45,24 +46,39 @@ app.post('/upload', function(req, res) {
 });
 
 app.post('/uploadAngular', function(req, res) {
-	// angular http client doesn't eat plain text return values, so this provides a json.
-	res.header('Access-Control-Allow-Origin', "*")
-
-    if (!req.files)
+    if (!req.files) 
 	return res.status(400).send('No files were uploaded.');
-    
-    let uploadFile = req.files.uploadFile;
 
-    uploadFile.mv('files/' + uploadFile.name, function(err) {
+    let uploadFile = req.files.uploadFile;
+    let localPath = 'files/' + uploadFile.name;
+
+	let makeResult = function ( mimetype ) {
+		let uploadUrl = 'http://localhost:3000/' + uploadFile.name;
+		let result = JSON.stringify({ 'url': uploadUrl, 'mime' : mimetype });
+		
+		res.header('Access-Control-Allow-Origin', "*");
+		return res.send(result);
+	}
+
+    uploadFile.mv( localPath , function(err) {
 		if (err) {
+			// no file
 		    return res.status(500).send(err);
 		} else {
-		 	let uploadUrl = 'http://localhost:3000/' + uploadFile.name;
-			let result = JSON.stringify({ 'url': uploadUrl });
-			return res.send(result);
+			// copy succeeded, now check mime:
+			mime(localPath, function (err, type) {
+    			if (err) {
+    				// couldn't get mime
+        			console.error(err.message);
+        			// ERROR: cannot open `/path/to/foo.pdf' (No such file or directory) 
+    			} else {
+        			console.log('Detected mime type: %s', type);
+        			return makeResult(type);
+        		}
+        	});
 		}
-    })
-    
+	});
+
 });
 
 
