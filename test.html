@@ -37,6 +37,60 @@
             <input type="file" name="uploadFile" />
             <input type='submit' value='Upload(angular)!' />
 	</form>
+
+
+		<form ref='uploadForm' 
+	      id='uploadFormRC' 
+	      action='https://dev.researchcatalogue.net/text-editor/simple-media-add' 
+	      method='post'
+	      target="_blank";
+	      encType="multipart/form-data">
+	        <label for="copyrightholder">copyrightholder</label>
+	        <input type="text" name="copyrightholder"/><br>
+
+	        <label for="description">description</label>
+	        <input type="text" name="description"/><br>
+
+	        <label for='name'>name</label>
+	        <input type='text' name="name"><br>
+
+	        <label for="research">research</label>
+	        <input type="text" name="research"/><br>
+
+	        <label for="mediatype">mediatype</label>
+	        <input type="text" name="mediatype"><br>
+
+	        <label for="media">choose file</label>
+            <input type="file" name="media" /><br>
+            
+            <input type='submit' value='UploadRCMedia' />
+        </form>
+
+<br>
+<br>
+        <form ref='editFromRC' 
+	      id='editFormRC' 
+	      action='https://dev.researchcatalogue.net/text-editor/simple-media-edit' 
+	      method='post'
+	      target="_blank";
+	      encType="multipart/form-data">
+	        <label for="copyrightholder">copyrightholder</label>
+	        <input type="text" name="copyrightholder"/><br>
+
+	        <label for="description">description</label>
+	        <input type="text" name="description"/><br>
+
+	        <label for='name'>name</label>
+	        <input type='text' name="name"><br>
+
+	        <label for="research">research</label>
+	        <input type="text" name="research"/><br>
+
+	        <label for="simple-media">mediaID</label>
+	        <input type="text" name="simple-media"><br>
+            
+            <input type='submit' value='EditRCMediaTest' />
+	</form>
     </body>
 
 
